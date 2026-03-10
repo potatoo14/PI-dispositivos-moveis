@@ -1,0 +1,56 @@
+{
+  "intro": [
+    {
+      "type": "dialogue",
+      "background": "doors",
+      "speaker": "Narrador",
+      "text": "Agora depois de abrir a porta certa, encontraria uma outra sala, menor, com uma mesa ao meio, sem nada por cima, e logo poderia avistar uma pequena cortina baixa, abriu a cortina, e deparou-se com uma pontinha com uma maçaneta falante.",
+      "sprites": [
+        { "character": "one", "position": "left" },
+        { "character": "two", "position": "center" },
+        { "character": "three", "position": "right" }
+      ]
+    },
+    {
+      "type": "dialogue",
+      "background": "doors",
+      "speaker": "Narrador",
+      "text": "A porta era muito pequena, e após uma breve conversa, Alice perguntou-se como poderia passar por lá, decidiu olhar pela sala, e ao mostrar a tela da sala de novo, uma garrafa havia aparecido encima da mesa",
+      "sprites": [{ "character": "two", "position": "center" }],
+      "choices": [
+        { "label": "Yes, let's go!", "targetScene": "ready_scene" },
+        { "label": "I'm a bit nervous.", "targetScene": "not_ready_scene" }
+      ]
+    }
+  ],
+  "ready_scene": [
+    {
+      "type": "dialogue",
+      "background": "doors",
+      "speaker": "Narrador",
+      "text": "Alice havia a altura agora para passar a portinha, porém, não havia pegado a chave na mesa, bem maior do que ela, ficou confusa até que então, em um efeito pop up, apareceria um prato com 3 biscoitos, após Alice obter os biscoitos, e interagir com o objeto, ela cresceria, assim de novo alterando o cenário da sala, com ela gigantesca e finalmente podendo pegar a chave para destrancar a porta",
+      "sprites": [{ "character": "three", "position": "center" }]
+    }
+  ],
+  "not_ready_scene": [
+    {
+      "type": "exploration",
+      "background": "doors",
+      "interactables": [
+        {
+          "id": "door_key",
+          "x": "60%",
+          "y": "75%",
+          "width": "10%",
+          "height": "10%",
+          "onInteract": {
+            "type": "collect",
+            "itemId": "shiny_key",
+            "message": "You found a key!"
+          },
+          "hideIfFlag": "has_key"
+        }
+      ]
+    }
+  ]
+}
