@@ -7,10 +7,10 @@ export function GameStateProvider({ children }) {
   const [flags, setFlags] = useState({});
 
   // 1. BASE LAYER: Where is the player standing?
-  const [currentRoom, setCurrentRoom] = useState("idk");
+  const [currentRoom, setCurrentRoom] = useState("intro_room");
 
   // 2. OVERLAY LAYER: Who are they talking to?
-  const [activeEvent, setActiveEvent] = useState("intro");
+  const [activeEvent, setActiveEvent] = useState("intro_event");
 
   const addToInventory = (itemId) => {
     if (!inventory.includes(itemId)) setInventory([...inventory, itemId]);

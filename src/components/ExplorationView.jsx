@@ -29,24 +29,14 @@ export default function ExplorationView() {
 
     if (onInteract.type === "dialogue") {
       setActiveEvent(onInteract.targetEvent);
-    }
-    else if (onInteract.type === "collect") {
+    } else if (onInteract.type === "collect") {
       addToInventory(onInteract.itemId);
-
+      setActiveEvent(onInteract.targetEvent);
       // If the interactable has a hideIfFlag, set it to true so the item disappears from the room
       if (interactable.hideIfFlag) {
         setFlag(interactable.hideIfFlag, true);
       }
-
-      if (onInteract.message) {
-        setActiveEvent("found_key_dialogue")
-        // Note: You could also change this to setActiveEvent("found_key_dialogue")
-        // if you want characters to talk when an item is found!
-      }
-    }
-
-    // ACTION 3: Moving to a new room (e.g., clicking a door)
-    else if (onInteract.type === "scene_change") {
+    } else if (onInteract.type === "room_change") {
       setCurrentRoom(onInteract.targetRoom);
     }
   };
