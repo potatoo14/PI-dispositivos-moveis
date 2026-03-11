@@ -1,5 +1,5 @@
 import { Image, StyleSheet } from "react-native";
-import { ASSETS } from "../core/assetsMap";
+import { ASSETS } from "../core/Content";
 
 export default function CharacterSprite({ character, position }) {
   if (!character || !ASSETS.sprites[character]) return null;

@@ -8,8 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { useGameState } from "../core/GameStateContext";
-import storyData from "../core/story.json";
-import { ASSETS } from "../core/assetsMap";
+import { ASSETS, STORY } from "../core/Content";
 
 export default function ExplorationView() {
   const {
@@ -22,18 +21,15 @@ export default function ExplorationView() {
   } = useGameState();
 
   // Grab the data for the room the player is currently standing in
-  const roomData = storyData[currentRoom];
+  const roomData = STORY[currentRoom];
 
   const handleInteract = (interactable) => {
     const { onInteract } = interactable;
     if (!onInteract) return;
 
-    // ACTION 1: Inspecting something (Triggers a Dialogue Overlay)
     if (onInteract.type === "dialogue") {
       setActiveEvent(onInteract.targetEvent);
     }
-
-    // ACTION 2: Picking up an item
     else if (onInteract.type === "collect") {
       addToInventory(onInteract.itemId);
 
@@ -43,7 +39,7 @@ export default function ExplorationView() {
       }
 
       if (onInteract.message) {
-        Alert.alert("Item Found!", onInteract.message);
+        setActiveEvent("found_key_dialogue")
         // Note: You could also change this to setActiveEvent("found_key_dialogue")
         // if you want characters to talk when an item is found!
       }

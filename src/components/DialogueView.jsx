@@ -6,16 +6,15 @@ import CharacterSprite from "./CharacterSprite";
 import ChoiceMenu from "./ChoiceMenu";
 
 import { useGameState } from "../core/GameStateContext";
-import storyData from "../core/story.json";
-import { ASSETS } from "../core/assetsMap";
+import { ASSETS, STORY } from "../core/Content";
 
 export default function DialogueView() {
   const { activeEvent, setActiveEvent } = useGameState();
   const [frameIndex, setFrameIndex] = useState(0);
 
-  if (!activeEvent || !storyData[activeEvent]) return null;
+  if (!activeEvent || !STORY[activeEvent]) return null;
 
-  const sceneFrames = storyData[activeEvent];
+  const sceneFrames = STORY[activeEvent];
   const currentFrame = sceneFrames[frameIndex];
 
   // If React is mid-transition and currentFrame is missing, just wait.
@@ -31,9 +30,9 @@ export default function DialogueView() {
     }
   };
 
-  const handleChoice = (targetNode) => {
+  const handleChoice = (targetEvent) => {
     setFrameIndex(0); 
-    setActiveEvent(targetNode);
+    setActiveEvent(targetEvent);
   };
 
   return (
