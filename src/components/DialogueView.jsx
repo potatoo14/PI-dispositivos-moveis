@@ -1,6 +1,5 @@
-// 1. You no longer need useEffect, so you can remove it from the import
 import React, { useState } from "react";
-import { StyleSheet, View, ImageBackground, TouchableWithoutFeedback } from "react-native";
+import { StyleSheet, View, TouchableWithoutFeedback } from "react-native";
 
 import DialogueBox from "./DialogueBox";
 import CharacterSprite from "./CharacterSprite";
@@ -32,18 +31,14 @@ export default function DialogueView() {
     }
   };
 
-  const handleChoice = (targetScene) => {
+  const handleChoice = (targetNode) => {
     setFrameIndex(0); 
-    setActiveEvent(targetScene);
+    setActiveEvent(targetNode);
   };
 
   return (
     <TouchableWithoutFeedback onPress={handleScreenTap}>
       <View style={StyleSheet.absoluteFill}>
-        <ImageBackground
-          source={ASSETS.backgrounds[currentFrame.background]}
-          style={styles.background}
-        >
           <View style={styles.spriteLayer}>
             {currentFrame.sprites?.map((sprite, index) => (
               <CharacterSprite
@@ -65,19 +60,12 @@ export default function DialogueView() {
             speaker={currentFrame.speaker}
             text={currentFrame.text}
           />
-        </ImageBackground>
       </View>
     </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-    justifyContent: "flex-end",
-  },
   spriteLayer: {
     position: "absolute",
     bottom: 150,

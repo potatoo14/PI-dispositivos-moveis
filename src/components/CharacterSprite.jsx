@@ -7,9 +7,15 @@ export default function CharacterSprite({ character, position }) {
   // Determine alignment based on the 'position' prop
   let alignmentStyle = { alignSelf: "center" };
   if (position === "left")
-    alignmentStyle = { alignSelf: "flex-start", marginLeft: "10%" };
+    alignmentStyle = {
+      alignSelf: "flex-start",
+      marginLeft: "3%",
+    };
   if (position === "right")
-    alignmentStyle = { alignSelf: "flex-end", marginRight: "10%" };
+    alignmentStyle = {
+      alignSelf: "flex-end",
+      marginRight: "3%",
+    };
 
   return (
     <Image
@@ -22,7 +28,7 @@ export default function CharacterSprite({ character, position }) {
 
 const styles = StyleSheet.create({
   sprite: {
-    width: "40%", // Using percentages for better scaling on tablets/phones
+    width: "40%",
     height: "100%",
   },
 });

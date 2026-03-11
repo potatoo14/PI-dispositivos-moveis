@@ -1,22 +1,28 @@
 import React from "react";
-import { View, ImageBackground, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  ImageBackground,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { useGameState } from "../core/GameStateContext";
 import storyData from "../core/story.json";
 import { ASSETS } from "../core/assetsMap";
 
 export default function ExplorationView() {
-  const { 
-    currentRoom, setCurrentRoom, 
-    setActiveEvent, 
-    addToInventory, 
-    checkFlag, setFlag 
+  const {
+    currentRoom,
+    setCurrentRoom,
+    setActiveEvent,
+    addToInventory,
+    checkFlag,
+    setFlag,
   } = useGameState();
-  
-  // Grab the data for the room the player is currently standing in
-  const roomData = storyData[currentRoom]?.[0]; 
 
-  // If this isn't an exploration scene, don't render anything
-  if (!roomData || roomData.type !== "exploration") return null;
+  // Grab the data for the room the player is currently standing in
+  const roomData = storyData[currentRoom];
 
   const handleInteract = (interactable) => {
     const { onInteract } = interactable;
@@ -25,20 +31,20 @@ export default function ExplorationView() {
     // ACTION 1: Inspecting something (Triggers a Dialogue Overlay)
     if (onInteract.type === "dialogue") {
       setActiveEvent(onInteract.targetEvent);
-    } 
-    
+    }
+
     // ACTION 2: Picking up an item
     else if (onInteract.type === "collect") {
       addToInventory(onInteract.itemId);
-      
+
       // If the interactable has a hideIfFlag, set it to true so the item disappears from the room
       if (interactable.hideIfFlag) {
         setFlag(interactable.hideIfFlag, true);
       }
-      
+
       if (onInteract.message) {
         Alert.alert("Item Found!", onInteract.message);
-        // Note: You could also change this to setActiveEvent("found_key_dialogue") 
+        // Note: You could also change this to setActiveEvent("found_key_dialogue")
         // if you want characters to talk when an item is found!
       }
     }
@@ -50,14 +56,13 @@ export default function ExplorationView() {
   };
 
   return (
-    <ImageBackground 
-      source={ASSETS.backgrounds[roomData.background]} 
+    <ImageBackground
+      source={ASSETS.backgrounds[roomData.background]}
       style={styles.container}
     >
       {/* Loop through all interactables in the JSON for this room */}
       {roomData.interactables?.map((interactable, index) => {
-        
-        // CRITICAL: If the player already picked this up, don't render the hitbox!
+        // If the player already picked this up, don't render the hitbox!
         if (interactable.hideIfFlag && checkFlag(interactable.hideIfFlag)) {
           return null;
         }
@@ -71,12 +76,17 @@ export default function ExplorationView() {
               top: interactable.y,
               width: interactable.width,
               height: interactable.height,
-              
               // UNCOMMENT THIS LINE WHILE DEVELOPING TO SEE THE HITBOXES:
-              backgroundColor: "rgba(255, 0, 0, 0.4)", 
+              backgroundColor: "rgba(255, 0, 0, 0.4)",
             }}
             onPress={() => handleInteract(interactable)}
-          />
+          >
+            <Image
+              style={styles.container}
+              resizeMode="contain"
+              source={ASSETS.sprites[interactable.id]}
+            />
+          </TouchableOpacity>
         );
       })}
     </ImageBackground>
@@ -84,5 +94,5 @@ export default function ExplorationView() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, width: "100%", height: "100%" }
+  container: { width: "100%", height: "100%" },
 });

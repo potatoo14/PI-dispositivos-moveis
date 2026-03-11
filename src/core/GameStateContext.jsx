@@ -7,7 +7,7 @@ export function GameStateProvider({ children }) {
   const [flags, setFlags] = useState({});
 
   // 1. BASE LAYER: Where is the player standing?
-  const [currentRoom, setCurrentRoom] = useState("not_ready_scene");
+  const [currentRoom, setCurrentRoom] = useState("idk");
 
   // 2. OVERLAY LAYER: Who are they talking to?
   const [activeEvent, setActiveEvent] = useState("intro");
