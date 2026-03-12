@@ -9,7 +9,7 @@ export default function ChoiceMenu({ choices, onChoose }) {
         <TouchableOpacity
           key={index}
           style={styles.button}
-          onPress={() => onChoose(choice.targetEvent)}
+          onPress={() => onChoose(choice)}
         >
           <Text style={styles.text}>{choice.label}</Text>
         </TouchableOpacity>

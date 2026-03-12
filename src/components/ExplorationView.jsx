@@ -1,44 +1,30 @@
-import React from "react";
 import {
-  View,
   ImageBackground,
   Image,
   StyleSheet,
   TouchableOpacity,
-  Alert,
 } from "react-native";
 import { useGameState } from "../core/GameStateContext";
 import { ASSETS, STORY } from "../core/Content";
 
 export default function ExplorationView() {
-  const {
-    currentRoom,
-    setCurrentRoom,
-    setActiveEvent,
-    addToInventory,
-    checkFlag,
-    setFlag,
-  } = useGameState();
+  const { currentRoom, setActiveEvent, checkFlag } = useGameState();
 
-  // Grab the data for the room the player is currently standing in
   const roomData = STORY[currentRoom];
 
-  const handleInteract = (interactable) => {
-    const { onInteract } = interactable;
-    if (!onInteract) return;
+  if (!roomData) {
+    console.warn(`Room "${currentRoom}" not found`);
+    return null;
+  }
 
-    if (onInteract.type === "dialogue") {
-      setActiveEvent(onInteract.targetEvent);
-    } else if (onInteract.type === "collect") {
-      addToInventory(onInteract.itemId);
-      setActiveEvent(onInteract.targetEvent);
-      // If the interactable has a hideIfFlag, set it to true so the item disappears from the room
-      if (interactable.hideIfFlag) {
-        setFlag(interactable.hideIfFlag, true);
-      }
-    } else if (onInteract.type === "room_change") {
-      setCurrentRoom(onInteract.targetRoom);
+  const handleInteract = (interactable) => {
+    if (!interactable.targetEvent) {
+      console.warn(
+        `interactable "${interactable}" doesn't have any event tied to it`,
+      );
+      return;
     }
+    setActiveEvent(interactable.targetEvent);
   };
 
   return (
@@ -48,8 +34,14 @@ export default function ExplorationView() {
     >
       {/* Loop through all interactables in the JSON for this room */}
       {roomData.interactables?.map((interactable, index) => {
-        // If the player already picked this up, don't render the hitbox!
+        // If the player already picked this up (or triggered a hide flag), don't render it!
         if (interactable.hideIfFlag && checkFlag(interactable.hideIfFlag)) {
+          return null;
+        }
+
+        const spriteSource = ASSETS.sprites[interactable.id];
+        if (!spriteSource) {
+          console.warn(`Sprite for "${interactable.id}" is missing`);
           return null;
         }
 
@@ -70,7 +62,7 @@ export default function ExplorationView() {
             <Image
               style={styles.container}
               resizeMode="contain"
-              source={ASSETS.sprites[interactable.id]}
+              source={spriteSource}
             />
           </TouchableOpacity>
         );

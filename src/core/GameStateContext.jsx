@@ -6,10 +6,8 @@ export function GameStateProvider({ children }) {
   const [inventory, setInventory] = useState([]);
   const [flags, setFlags] = useState({});
 
-  // 1. BASE LAYER: Where is the player standing?
   const [currentRoom, setCurrentRoom] = useState("intro_room");
 
-  // 2. OVERLAY LAYER: Who are they talking to?
   const [activeEvent, setActiveEvent] = useState("intro_event");
 
   const addToInventory = (itemId) => {
@@ -24,6 +22,7 @@ export function GameStateProvider({ children }) {
     setFlags((prev) => ({ ...prev, [flagName]: value }));
   };
 
+  // check if the value is truthy
   const checkFlag = (flagName) => !!flags[flagName];
 
   return (
