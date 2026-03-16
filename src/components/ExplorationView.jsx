@@ -8,9 +8,10 @@ import { useGameState } from "../core/GameStateContext";
 import { ASSETS, STORY } from "../core/Content";
 
 export default function ExplorationView() {
-  const { currentRoom, setActiveEvent, checkFlag } = useGameState();
+  // const { currentRoom, setActiveEvent, checkFlag } = useGameState();
+  const { gameState, dispatch } = useGameState();
 
-  const roomData = STORY[currentRoom];
+  const roomData = STORY[gameState.currentRoom];
 
   if (!roomData) {
     console.warn(`Room "${currentRoom}" not found`);
@@ -24,7 +25,8 @@ export default function ExplorationView() {
       );
       return;
     }
-    setActiveEvent(interactable.targetEvent);
+    // dispatch(interactable.targetEvent, "room_change");
+    dispatch({ type: "set_event", targetEvent: interactable.targetEvent });
   };
 
   return (
@@ -35,7 +37,7 @@ export default function ExplorationView() {
       {/* Loop through all interactables in the JSON for this room */}
       {roomData.interactables?.map((interactable, index) => {
         // If the player already picked this up (or triggered a hide flag), don't render it!
-        if (interactable.hideIfFlag && checkFlag(interactable.hideIfFlag)) {
+        if (interactable.hideIfFlag && gameState.flags[interactable.hideIfFlag]) {
           return null;
         }
 

@@ -1,45 +1,53 @@
-import React, { createContext, useState, useContext } from "react";
+import { createContext, useReducer, useContext } from "react";
+
+const initialState = {
+  inventory: [],
+  flags: {},
+  currentRoom: "intro_room",
+  activeEvent: "intro_event",
+};
+
+function gameReducer(state, action) {
+  switch (action.type) {
+    case "give_item":
+      // if (state.inventory.includes(action.itemId)) return state;
+      return { ...state, inventory: [...state.inventory, action.itemId] };
+
+    case "take_item":
+      return {
+        ...state,
+        inventory: state.inventory.filter((id) => id !== action.itemId),
+      };
+
+    case "set_flag":
+      return { ...state, flags: { ...state.flags, [action.flag]: true } };
+
+    // case "remove_flag":
+    //   return { ...state, flags: { ...state.flags, [action.flag]: true } };
+
+    // case "toggle_flag":
+    //   return { ...state, flags: { ...state.flags, [action.flag]: true } };
+
+    case "room_change":
+      return { ...state, currentRoom: action.targetRoom };
+
+    case "set_event":
+      return { ...state, activeEvent: action.targetEvent };
+
+    default:
+      // console.warn(`action "${action}" is unknown, doing nothing`);
+      // the dispatcher ignores actions when appropriate, like "dialogue"
+      return state;
+  }
+}
 
 const GameStateContext = createContext();
 
 export function GameStateProvider({ children }) {
-  const [inventory, setInventory] = useState([]);
-  const [flags, setFlags] = useState({});
-
-  const [currentRoom, setCurrentRoom] = useState("intro_room");
-
-  const [activeEvent, setActiveEvent] = useState("intro_event");
-
-  const addToInventory = (itemId) => {
-    if (!inventory.includes(itemId)) setInventory([...inventory, itemId]);
-  };
-
-  const removeFromInventory = (itemId) => {
-    setInventory(inventory.filter((id) => id !== itemId));
-  };
-
-  const setFlag = (flagName, value = true) => {
-    setFlags((prev) => ({ ...prev, [flagName]: value }));
-  };
-
-  // check if the value is truthy
-  const checkFlag = (flagName) => !!flags[flagName];
+  const [gameState, dispatch] = useReducer(gameReducer, initialState);
 
   return (
-    <GameStateContext.Provider
-      value={{
-        inventory,
-        addToInventory,
-        removeFromInventory,
-        flags,
-        setFlag,
-        checkFlag,
-        currentRoom,
-        setCurrentRoom,
-        activeEvent,
-        setActiveEvent,
-      }}
-    >
+    <GameStateContext.Provider value={{ gameState, dispatch }}>
       {children}
     </GameStateContext.Provider>
   );

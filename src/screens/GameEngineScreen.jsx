@@ -5,12 +5,12 @@ import EventManager from "../components/EventManager";
 import ExplorationView from "../components/ExplorationView";
 
 export default function GameEngineScreen() {
-  const { activeEvent } = useGameState();
+  const { gameState } = useGameState();
 
   return (
     <View style={styles.container}>
       <ExplorationView />
-      {activeEvent ? <EventManager /> : null}
+      {gameState.activeEvent ? <EventManager /> : null}
     </View>
   );
 }

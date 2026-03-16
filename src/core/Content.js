@@ -1,32 +1,46 @@
 export const ASSETS = {
   backgrounds: {
-    doors: require("../../assets/backgrounds/doors.jpeg"),
-    five: require("../../assets/backgrounds/5.png"),
+    b: require("../../assets/backgrounds/b.jpeg"),
+    b2: require("../../assets/backgrounds/b2.jpeg"),
   },
   sprites: {
-    one: require("../../assets/sprites/where-is-my-plushie-woman.webp"),
-    two: require("../../assets/sprites/ultraviolet.jpg"),
-    door_key: require("../../assets/sprites/unnamed.webp"),
+    a: require("../../assets/sprites/a.jpeg"),
+    c: require("../../assets/sprites/c.jpeg"),
   },
 };
 export const STORY = {
   // 1. The Room
   intro_room: {
-    background: "doors",
+    background: "b",
     interactables: [
       {
-        id: "door_key",
+        id: "a",
         x: "60%",
         y: "60%",
-        width: "10%",
+        width: "20%",
         height: "20%",
         targetEvent: "pickup_key_event",
-        hideIfFlag: "has_key",
+        // hideIfFlag: "has_key",
+      },
+    ],
+  },
+  another_room: {
+    background: "b2",
+    interactables: [
+      {
+        id: "c",
+        x: "30%",
+        y: "30%",
+        width: "20%",
+        height: "20%",
+        targetEvent: "pickup_key_event",
+        // hideIfFlag: "has_key",
       },
     ],
   },
   // 2. The Event Manager reads this top-to-bottom
   pickup_key_event: [
+    { type: "room_change", targetRoom: "another_room" },
     { type: "dialogue", sequence: "found_key_talk" }, // Pauses to talk
     { type: "give_item", itemId: "door_key" }, // Invisible logic
     { type: "set_flag", flag: "has_key" }, // Invisible logic
@@ -35,5 +49,5 @@ export const STORY = {
   // 3. The Dialogue View reads these
   found_key_talk: [{ speaker: "Alice", text: "Oh look, a key!" }],
   happy_talk: [{ speaker: "Alice", text: "Now I can open the door!" }],
-  intro_event: [{}], // the engine requires an intro_room and intro_event to start with
+  intro_event: [{type: ""}], // the engine requires an intro_room and intro_event to start with
 };
