@@ -19,7 +19,7 @@ export const STORY = {
         y: "60%",
         width: "20%",
         height: "20%",
-        targetEvent: "pickup_key_event",
+        targetEvent: "other_event",
         // hideIfFlag: "has_key",
       },
     ],
@@ -34,14 +34,15 @@ export const STORY = {
         width: "20%",
         height: "20%",
         targetEvent: "something",
-        // hideIfFlag: "has_key",
+        showIfFlag: "has_key",
       },
     ],
   },
   something: [{ type: "dialogue", sequence: "something_dialogue" }],
   something_dialogue: [
-    {text: "CHOICES!"},
+    { text: "CHOICES!" },
     {
+      text: "something else",
       choices: [
         { label: "choice 1", targetEvent: "something_event" },
         { label: "choice 2", targetEvent: "something_event2" },
@@ -52,10 +53,10 @@ export const STORY = {
   something_event2: [{ type: "dialogue", sequence: "something_dialogue2" }],
   something_dialogue2: [{ text: "happy ending" }],
   // 2. The Event Manager reads this top-to-bottom
-  pickup_key_event: [
+  other_event: [
     { type: "room_change", targetRoom: "another_room" },
     { type: "dialogue", sequence: "found_key_talk" }, // Pauses to talk
-    { type: "give_item", itemId: "door_key" }, // Invisible logic
+    // { type: "give_item", itemId: "door_key" }, // Invisible logic
     { type: "set_flag", flag: "has_key" }, // Invisible logic
     { type: "dialogue", sequence: "happy_talk" }, // Pauses to talk again
   ],

@@ -25,8 +25,30 @@ export default function ExplorationView() {
       );
       return;
     }
-    // dispatch(interactable.targetEvent, "room_change");
     dispatch({ type: "set_event", targetEvent: interactable.targetEvent });
+  };
+
+  const canRender = (interactable, gameState) => {
+    // If a hide condition is met, DO NOT render
+    if (interactable.hideIfFlag && gameState.flags[interactable.hideIfFlag])
+      return false;
+    if (
+      interactable.hideIfItem &&
+      gameState.inventory.includes(interactable.hideIfItem)
+    )
+      return false;
+
+    // If a show condition is missing, DO NOT render
+    if (interactable.showIfFlag && !gameState.flags[interactable.showIfFlag])
+      return false;
+    if (
+      interactable.showIfItem &&
+      !gameState.inventory.includes(interactable.showIfItem)
+    )
+      return false;
+
+    // If it survived all checks, render it!
+    return true;
   };
 
   return (
@@ -34,41 +56,40 @@ export default function ExplorationView() {
       source={ASSETS.backgrounds[roomData.background]}
       style={styles.container}
     >
-      {/* Loop through all interactables in the JSON for this room */}
-      {roomData.interactables?.map((interactable, index) => {
-        // If the player already picked this up (or triggered a hide flag), don't render it!
-        if (interactable.hideIfFlag && gameState.flags[interactable.hideIfFlag]) {
-          return null;
-        }
+      {/* Filter out anything that shouldn't be visible */}
+      {/* Loop through only the ones that survived */}
+      {roomData.interactables
+        ?.filter((interactable) => canRender(interactable, gameState))
+        .map((interactable, index) => {
+          const spriteSource = ASSETS.sprites[interactable.id];
+          if (!spriteSource) {
+            console.warn(
+              `[ExplorationView] Sprite for "${interactable.id}" is missing`,
+            );
+            return null;
+          }
 
-        const spriteSource = ASSETS.sprites[interactable.id];
-        if (!spriteSource) {
-          console.warn(`[ExplorationView] Sprite for "${interactable.id}" is missing`);
-          return null;
-        }
-
-        return (
-          <TouchableOpacity
-            key={index}
-            style={{
-              position: "absolute",
-              left: interactable.x,
-              top: interactable.y,
-              width: interactable.width,
-              height: interactable.height,
-              // UNCOMMENT THIS LINE WHILE DEVELOPING TO SEE THE HITBOXES:
-              backgroundColor: "rgba(255, 0, 0, 0.4)",
-            }}
-            onPress={() => handleInteract(interactable)}
-          >
-            <Image
-              style={styles.container}
-              resizeMode="contain"
-              source={spriteSource}
-            />
-          </TouchableOpacity>
-        );
-      })}
+          return (
+            <TouchableOpacity
+              key={index}
+              style={{
+                position: "absolute",
+                left: interactable.x,
+                top: interactable.y,
+                width: interactable.width,
+                height: interactable.height,
+                backgroundColor: "rgba(255, 0, 0, 0.4)", // UNCOMMENT THIS LINE WHILE DEVELOPING TO SEE THE HITBOXES:
+              }}
+              onPress={() => handleInteract(interactable)}
+            >
+              <Image
+                style={styles.container}
+                resizeMode="contain"
+                source={spriteSource}
+              />
+            </TouchableOpacity>
+          );
+        })}
     </ImageBackground>
   );
 }

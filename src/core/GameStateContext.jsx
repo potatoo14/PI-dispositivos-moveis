@@ -9,8 +9,9 @@ const initialState = {
 
 function gameReducer(state, action) {
   switch (action.type) {
+
     case "give_item":
-      // if (state.inventory.includes(action.itemId)) return state;
+      if (state.inventory.includes(action.itemId)) return state; // Prevent duplicates
       return { ...state, inventory: [...state.inventory, action.itemId] };
 
     case "take_item":
@@ -22,11 +23,14 @@ function gameReducer(state, action) {
     case "set_flag":
       return { ...state, flags: { ...state.flags, [action.flag]: true } };
 
-    // case "remove_flag":
-    //   return { ...state, flags: { ...state.flags, [action.flag]: true } };
+    case "remove_flag":
+      return { ...state, flags: { ...state.flags, [action.flag]: false } };
 
-    // case "toggle_flag":
-    //   return { ...state, flags: { ...state.flags, [action.flag]: true } };
+    case "toggle_flag":
+      return { 
+        ...state, 
+        flags: { ...state.flags, [action.flag]: !state.flags[action.flag] } 
+      };
 
     case "room_change":
       return { ...state, currentRoom: action.targetRoom };
@@ -35,8 +39,7 @@ function gameReducer(state, action) {
       return { ...state, activeEvent: action.targetEvent };
 
     default:
-      // console.warn(`action "${action}" is unknown, doing nothing`);
-      // the dispatcher ignores actions when appropriate, like "dialogue"
+      // The dispatcher ignores visual actions like "dialogue"
       return state;
   }
 }
