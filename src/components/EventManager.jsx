@@ -6,14 +6,38 @@ import DialogueView from "./DialogueView";
 export default function EventManager() {
   const { gameState, dispatch } = useGameState();
   const [actionIndex, setActionIndex] = useState(0);
+  const [trackedEvent, setTrackedEvent] = useState(gameState.activeEvent);
 
-  useEffect(() => {
+  // EventManager reset, using this instead of useEffect to avoid race condition
+  if (gameState.activeEvent !== trackedEvent) {
+    setTrackedEvent(gameState.activeEvent);
     setActionIndex(0);
-  }, [gameState.activeEvent]);
+    return null; 
+  }
 
-  // Safely grab the sequence and action (default to empty array/null if missing)
-  const eventSequence = STORY[gameState.activeEvent] || [];
+  if (!gameState.activeEvent) {
+    // This usually means the parent (GameEngineScreen) failed to unmount this component
+    // when the event finished. It's safe to return null, but worth noting.
+    return null; 
+  }
+
+  const eventSequence = STORY[gameState.activeEvent];
+
+  if (!eventSequence || !Array.isArray(eventSequence) || eventSequence.length === 0) {
+    console.error(`[EventManager] The event "${gameState.activeEvent}" is either missing from STORY, is not an array, or is totally empty`);
+    return null;
+  }
+
   const currentAction = eventSequence[actionIndex];
+
+  if (!currentAction) {
+    console.error(`[EventManager] Tried to read action index ${actionIndex} in "${gameState.activeEvent}", but it doesn't exist (Sequence length is ${eventSequence.length})`);
+    return null;
+  }
+
+  if (!currentAction.type) {
+    console.warn(`[EventManager] The action at index ${actionIndex} in "${gameState.activeEvent}" has no 'type' property`, currentAction);
+  }
 
   const nextAction = () => {
     if (actionIndex < eventSequence.length - 1) {
@@ -24,34 +48,29 @@ export default function EventManager() {
   };
 
   useEffect(() => {
-    // If there's no action, do nothing
     if (!currentAction) return;
 
     dispatch(currentAction);
 
-    // If it's not dialogue, advance automatically
     if (currentAction.type !== "dialogue") {
       nextAction();
     }
   }, [actionIndex, currentAction]);
 
-  if (!eventSequence.length) {
-    console.warn(`Event "${gameState.activeEvent}" not found or has zero elements`);
-    return null;
-  }
-  if (!currentAction) {
-    return null;
-  }
-
   if (currentAction.type === "dialogue") {
+    if (!currentAction.sequence) {
+      console.error(`[EventManager] Dialogue action in "${gameState.activeEvent}" is missing a 'sequence' property`, currentAction);
+    }
+    
     return (
       <DialogueView
+        key={`${gameState.activeEvent}-${actionIndex}`}
         sequenceId={currentAction.sequence}
         onComplete={nextAction}
       />
     );
   }
 
-  // Fallback for invisible logic actions
-  return null;
+  // These are for invisible logic actions (not Dialogue), so returning null is perfectly normal and correct.
+  return null; 
 }

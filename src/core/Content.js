@@ -33,11 +33,24 @@ export const STORY = {
         y: "30%",
         width: "20%",
         height: "20%",
-        targetEvent: "pickup_key_event",
+        targetEvent: "something",
         // hideIfFlag: "has_key",
       },
     ],
   },
+  something: [{ type: "dialogue", sequence: "something_dialogue" }],
+  something_dialogue: [
+    {text: "CHOICES!"},
+    {
+      choices: [
+        { label: "choice 1", targetEvent: "something_event" },
+        { label: "choice 2", targetEvent: "something_event2" },
+      ],
+    },
+  ],
+  something_event: [{ type: "dialogue", sequence: "something_dialogue" }],
+  something_event2: [{ type: "dialogue", sequence: "something_dialogue2" }],
+  something_dialogue2: [{ text: "happy ending" }],
   // 2. The Event Manager reads this top-to-bottom
   pickup_key_event: [
     { type: "room_change", targetRoom: "another_room" },
@@ -49,5 +62,5 @@ export const STORY = {
   // 3. The Dialogue View reads these
   found_key_talk: [{ speaker: "Alice", text: "Oh look, a key!" }],
   happy_talk: [{ speaker: "Alice", text: "Now I can open the door!" }],
-  intro_event: [{type: ""}], // the engine requires an intro_room and intro_event to start with
+  intro_event: [{ type: "" }], // the engine requires an intro_room and intro_event to start with
 };

@@ -14,14 +14,14 @@ export default function ExplorationView() {
   const roomData = STORY[gameState.currentRoom];
 
   if (!roomData) {
-    console.warn(`Room "${currentRoom}" not found`);
+    console.error(`[ExplorationView] Room "${currentRoom}" not found`);
     return null;
   }
 
   const handleInteract = (interactable) => {
     if (!interactable.targetEvent) {
       console.warn(
-        `interactable "${interactable}" doesn't have any event tied to it`,
+        `[ExplorationView] interactable "${interactable}" doesn't have any event tied to it`,
       );
       return;
     }
@@ -43,7 +43,7 @@ export default function ExplorationView() {
 
         const spriteSource = ASSETS.sprites[interactable.id];
         if (!spriteSource) {
-          console.warn(`Sprite for "${interactable.id}" is missing`);
+          console.warn(`[ExplorationView] Sprite for "${interactable.id}" is missing`);
           return null;
         }
 

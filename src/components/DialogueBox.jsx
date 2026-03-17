@@ -13,20 +13,18 @@ export default function DialogueBox({ speaker, text }) {
 
 const styles = StyleSheet.create({
   container: {
-    height: 150,
+    height: "30%",
     backgroundColor: "rgba(0, 0, 0, 0.8)",
-    padding: 20,
-    borderTopWidth: 3,
-    borderColor: "#ff9900", // Kid-friendly accent color
+    padding: "1%",
     position: "absolute",
     bottom: 0,
     width: "100%",
   },
   speakerName: {
-    color: "#ffd700",
+    color: "yellow",
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 8,
   },
-  dialogueText: { color: "#fff", fontSize: 18, lineHeight: 26 },
+  dialogueText: { color: "white", fontSize: 18, lineHeight: 26 },
 });

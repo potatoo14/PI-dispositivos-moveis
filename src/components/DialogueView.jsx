@@ -9,20 +9,20 @@ import { useGameState } from "../core/GameStateContext";
 import { ASSETS, STORY } from "../core/Content";
 
 export default function DialogueView({ sequenceId, onComplete }) {
-  const { setActiveEvent } = useGameState();
+  const { gameState, dispatch } = useGameState();
   const [frameIndex, setFrameIndex] = useState(0);
 
   const sceneFrames = STORY[sequenceId];
 
   if (!sceneFrames || !Array.isArray(sceneFrames)) {
-    console.warn(`Dialogue "${sequenceId}" not found or is not an array`);
+    console.error(`[DialogueView] Dialogue "${sequenceId}" not found or is not an array`);
     return null;
   }
 
   const currentFrame = sceneFrames[frameIndex];
   if (!currentFrame) {
-    console.warn(
-      `Dialogue frame index "${frameIndex}" not found in "${sceneFrames}"`,
+    console.error(
+      `[DialogueView] Dialogue frame index "${frameIndex}" not found in "${sceneFrames}"`,
     );
     return null;
   }
@@ -37,8 +37,8 @@ export default function DialogueView({ sequenceId, onComplete }) {
     }
   };
 
-  const handleChoice = (targetEvent) => {
-    setActiveEvent(targetEvent);
+  const handleChoice = (choice) => {
+    dispatch({type: "set_event", targetEvent: choice.targetEvent});
   };
 
   return (

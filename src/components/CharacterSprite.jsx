@@ -2,7 +2,10 @@ import { Image, StyleSheet } from "react-native";
 import { ASSETS } from "../core/Content";
 
 export default function CharacterSprite({ character, position }) {
-  if (!character || !ASSETS.sprites[character]) return null;
+  if (!character || !ASSETS.sprites[character]) {
+    console.error(`[CharacterSprite] sprite not found`);
+    return null;
+  }
 
   // Determine alignment based on the 'position' prop
   let alignmentStyle = { alignSelf: "center" };
