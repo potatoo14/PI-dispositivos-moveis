@@ -1,67 +1,83 @@
+const arrowLeft = (target, x = "2%", y = "45%") => ({
+  id: "arrow_left", 
+  targetRoom: target,
+  x, y,
+  width: "10%",
+  height: "15%",
+});
+
+const arrowRight = (target, x = "88%", y = "45%") => ({
+  id: "arrow_right",
+  targetRoom: target,
+  x, y,
+  width: "10%",
+  height: "15%",
+});
+
+const arrowUp = (target, x = "45%", y = "5%") => ({
+  id: "arrow_up",
+  targetRoom: target,
+  x, y,
+  width: "15%",
+  height: "10%",
+});
+
 export const ASSETS = {
   backgrounds: {
-    b: require("../../assets/backgrounds/b.jpeg"),
-    b2: require("../../assets/backgrounds/b2.jpeg"),
+    b1: require("../../assets/backgrounds/background(1).png"),
+    dog_house: require("../../assets/backgrounds/dog-house.png"),
   },
   sprites: {
-    a: require("../../assets/sprites/a.jpeg"),
-    c: require("../../assets/sprites/c.jpeg"),
+    alice: require("../../assets/sprites/alice def.png"),
+    arrow_left: require("../../assets/sprites/arrow left.png"),
+    arrow_right: require("../../assets/sprites/arrow right.png"),
   },
 };
 export const STORY = {
   // 1. The Room
   intro_room: {
-    background: "b",
+    background: "b1",
     interactables: [
       {
-        id: "a",
-        x: "60%",
-        y: "60%",
-        width: "20%",
-        height: "20%",
-        targetEvent: "other_event",
-        // hideIfFlag: "has_key",
+        id: "alice",
+        x: "3%",
+        y: "15%",
+        width: "45%",
+        height: "95%",
+        targetEvent: "alice_dialogue_event",
       },
+      //Seta esquerda
+      arrowLeft("quintal_esq"),
     ],
   },
-  another_room: {
-    background: "b2",
-    interactables: [
-      {
-        id: "c",
-        x: "30%",
-        y: "30%",
-        width: "20%",
-        height: "20%",
-        targetEvent: "something",
-        showIfFlag: "has_key",
-      },
-    ],
-  },
-  something: [{ type: "dialogue", sequence: "something_dialogue" }],
-  something_dialogue: [
-    { text: "CHOICES!" },
-    {
-      text: "something else",
-      choices: [
-        { label: "choice 1", targetEvent: "something_event" },
-        { label: "choice 2", targetEvent: "something_event2" },
+
+  quintal_esq:  {
+      background: "dog_house",
+      interactables: [
+        {
+        id: "dir-direta",
+        targetRoom: 'intro_room',
+        x: "80%",
+        y: "20%",
+        width: "10%",
+        height: "30%"
+        }
       ],
-    },
+  },
+
+  portao_norte: {
+
+  },
+  
+  alice_dialogue_event: [
+    { type: "dialogue", sequence: "alice_dialogue"},
   ],
-  something_event: [{ type: "dialogue", sequence: "something_dialogue" }],
-  something_event2: [{ type: "dialogue", sequence: "something_dialogue2" }],
-  something_dialogue2: [{ text: "happy ending" }],
-  // 2. The Event Manager reads this top-to-bottom
-  other_event: [
-    { type: "room_change", targetRoom: "another_room" },
-    { type: "dialogue", sequence: "found_key_talk" }, // Pauses to talk
-    // { type: "give_item", itemId: "door_key" }, // Invisible logic
-    { type: "set_flag", flag: "has_key" }, // Invisible logic
-    { type: "dialogue", sequence: "happy_talk" }, // Pauses to talk again
+
+  alice_dialogue: [
+    {text: "Para onde o coelho foi?"},
   ],
-  // 3. The Dialogue View reads these
-  found_key_talk: [{ speaker: "Alice", text: "Oh look, a key!" }],
-  happy_talk: [{ speaker: "Alice", text: "Now I can open the door!" }],
-  intro_event: [{ type: "" }], // the engine requires an intro_room and intro_event to start with
+
+  intro_event: [
+  { type: "room_change", targetRoom: "intro_room" },
+],
 };

@@ -5,6 +5,7 @@ const initialState = {
   flags: {},
   currentRoom: "intro_room",
   activeEvent: "intro_event",
+  currentScreen: "MENU",
 };
 
 function gameReducer(state, action) {
@@ -38,7 +39,20 @@ function gameReducer(state, action) {
     case "set_event":
       return { ...state, activeEvent: action.targetEvent };
 
-    default:
+    case "START_GAME":
+      return { 
+        ...state, 
+        currentScreen: "GAME",
+        activeEvent: null // Limpa eventos iniciais ao começar
+    };
+
+    case "GO_TO_MENU":
+      return { 
+        ...state, 
+        currentScreen: "MENU" 
+  };
+
+  default:
       // The dispatcher ignores visual actions like "dialogue"
       return state;
   }
