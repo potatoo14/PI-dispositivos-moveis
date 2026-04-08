@@ -3,18 +3,23 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
+  ScrollView,
+  useWindowDimensions,
 } from "react-native";
 import { useGameState } from "../core/GameStateContext";
 import { ASSETS, STORY } from "../core/Content";
 
 export default function ExplorationView() {
-  // const { currentRoom, setActiveEvent, checkFlag } = useGameState();
   const { gameState, dispatch } = useGameState();
 
   const roomData = STORY[gameState.currentRoom];
 
+  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
+
   if (!roomData) {
-    console.error(`[ExplorationView] Room "${currentRoom}" not found`);
+    console.error(
+      `[ExplorationView] Room "${gameState.currentRoom}" not found`,
+    );
     return null;
   }
 
@@ -51,49 +56,77 @@ export default function ExplorationView() {
     return true;
   };
 
+  // Default to 1 (static screen) if not specified in STORY
+  const roomMultiplierW = roomData.scrollWidth || 1;
+  const roomMultiplierH = roomData.scrollHeight || 1;
+
+  const totalRoomWidth = SCREEN_WIDTH * roomMultiplierW;
+  const totalRoomHeight = SCREEN_HEIGHT * roomMultiplierH;
+
   return (
-    <ImageBackground
-      source={ASSETS.backgrounds[roomData.background]}
+    <ScrollView
+      key={gameState.currentRoom} // Destroy and rebuild ScrollView everytime currentRoom changes, so it doesn't keep how much you scrolled from different rooms
+      bounces={false} // Disables rubber-band stretching on iOS
+      overScrollMode="never" // Disables rubber-band stretching on Android
+      showsVerticalScrollIndicator={false}
       style={styles.container}
     >
-      {/* Filter out anything that shouldn't be visible */}
-      {/* Loop through only the ones that survived */}
-      {roomData.interactables
-        ?.filter((interactable) => canRender(interactable, gameState))
-        .map((interactable, index) => {
-          const spriteSource = ASSETS.sprites[interactable.id];
-          if (!spriteSource) {
-            console.warn(
-              `[ExplorationView] Sprite for "${interactable.id}" is missing`,
-            );
-            return null;
-          }
+      <ScrollView
+        horizontal={true}
+        bounces={false}
+        overScrollMode="never"
+        showsHorizontalScrollIndicator={false}
+        style={styles.container}
+      >
+        <ImageBackground
+          source={ASSETS.backgrounds[roomData.background]}
+          style={{ width: totalRoomWidth, height: totalRoomHeight }}
+          resizeMode="cover" // scales up the image to fit in the background intended size (even if that means cropping the image)
+        >
+          {/* Filter out anything that shouldn't be visible */}
+          {/* Loop through only the ones that survived */}
+          {roomData.interactables
+            ?.filter((interactable) => canRender(interactable, gameState))
+            .map((interactable, index) => {
+              const spriteSource = ASSETS.sprites[interactable.img];
+              if (!spriteSource) {
+                console.warn(
+                  `[ExplorationView] Sprite for "${interactable.img}" is missing`,
+                );
+                return null;
+              }
 
-          return (
-            <TouchableOpacity
-              key={index}
-              style={{
-                position: "absolute",
-                left: interactable.x,
-                top: interactable.y,
-                width: interactable.width,
-                height: interactable.height,
-                backgroundColor: "rgba(255, 0, 0, 0.4)", // UNCOMMENT THIS LINE WHILE DEVELOPING TO SEE THE HITBOXES:
-              }}
-              onPress={() => handleInteract(interactable)}
-            >
-              <Image
-                style={styles.container}
-                resizeMode="contain"
-                source={spriteSource}
-              />
-            </TouchableOpacity>
-          );
-        })}
-    </ImageBackground>
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={{
+                    position: "absolute",
+                    left: interactable.x,
+                    top: interactable.y,
+                    width: interactable.width,
+                    height: interactable.height,
+                    // backgroundColor: "rgba(255, 0, 0, 0.4)", // UNCOMMENT THIS LINE WHILE DEVELOPING TO SEE THE HITBOXES:
+                  }}
+                  onPress={() => handleInteract(interactable)}
+                >
+                  <Image
+                    style={styles.container}
+                    resizeMode="contain"
+                    source={spriteSource}
+                  />
+                </TouchableOpacity>
+              );
+            })}
+        </ImageBackground>
+      </ScrollView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { width: "100%", height: "100%" },
+  container: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
 });

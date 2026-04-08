@@ -43,7 +43,6 @@ function gameReducer(state, action) {
       return { 
         ...state, 
         currentScreen: "GAME",
-        activeEvent: null // Limpa eventos iniciais ao começar
     };
 
     case "GO_TO_MENU":
