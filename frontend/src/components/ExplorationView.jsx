@@ -24,13 +24,22 @@ export default function ExplorationView() {
   }
 
   const handleInteract = (interactable) => {
-    if (!interactable.targetEvent) {
+    // i hate this but it's the simplest solution
+    // bypass the EventManager doing things direcly
+    if (interactable.targetRoom) {
+      dispatch({ type: "room_change", targetRoom: interactable.targetRoom });
+    } else if (interactable.targetDialogue) {
+      dispatch({ 
+        type: "set_event", // builds a custom event without relying on STORY data
+        targetEvent: [ { type: "dialogue", sequence: interactable.targetDialogue } ] 
+      });
+    } else if (interactable.targetEvent) {
+      dispatch({ type: "set_event", targetEvent: interactable.targetEvent });
+    } else {
       console.warn(
-        `[ExplorationView] interactable "${interactable}" doesn't have any event tied to it`,
+        `[ExplorationView] interactable "${interactable}" has no target set`,
       );
-      return;
     }
-    dispatch({ type: "set_event", targetEvent: interactable.targetEvent });
   };
 
   const canRender = (interactable, gameState) => {
@@ -93,7 +102,6 @@ export default function ExplorationView() {
                 console.warn(
                   `[ExplorationView] Sprite for "${interactable.img}" is missing`,
                 );
-                return null;
               }
 
               return (
@@ -110,7 +118,15 @@ export default function ExplorationView() {
                   onPress={() => handleInteract(interactable)}
                 >
                   <Image
-                    style={styles.container}
+                    style={[
+                      styles.container,
+                      {
+                        transform: [
+                          { rotate: interactable.rotation || "0deg" },
+                          { scale: interactable.scale || 1 },
+                        ],
+                      },
+                    ]}
                     resizeMode="contain"
                     source={spriteSource}
                   />

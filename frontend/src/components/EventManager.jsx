@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { useGameState } from "../core/GameStateContext";
 import { STORY } from "../core/Content";
 import DialogueView from "./DialogueView";
@@ -21,7 +22,11 @@ export default function EventManager() {
     return null;
   }
 
-  const eventSequence = STORY[gameState.activeEvent];
+  // If activeEvent is a array, it means it's a custom event created outside of STORY
+  // Otherwise just use what's on STORY
+  const eventSequence = Array.isArray(gameState.activeEvent)
+    ? gameState.activeEvent
+    : STORY[gameState.activeEvent];
 
   if (
     !eventSequence ||
@@ -54,7 +59,10 @@ export default function EventManager() {
     if (actionIndex < eventSequence.length - 1) {
       setActionIndex((prev) => prev + 1);
     } else {
-      dispatch({ type: "set_event", targetEvent: null });
+      dispatch({
+        type: "set_event",
+        targetEvent: currentAction.targetEvent, // clever trick to make set_event at the end of an event array work properly
+      });
     }
   };
 
@@ -63,7 +71,7 @@ export default function EventManager() {
 
     dispatch(currentAction);
 
-    if (currentAction.type !== "dialogue") {
+    if (currentAction.type !== "dialogue" && currentAction.type !== "wait") {
       nextAction();
     }
   }, [actionIndex, currentAction]);
@@ -85,6 +93,15 @@ export default function EventManager() {
     );
   }
 
-  // These are for invisible logic actions (not Dialogue), so returning null is perfectly normal and correct.
+  if (currentAction.type === "wait") {
+    return (
+      // invisible full-screen button that just advances the event when tapped
+      <TouchableWithoutFeedback onPress={nextAction}>
+        <View style={StyleSheet.absoluteFill} />
+      </TouchableWithoutFeedback>
+    );
+  }
+
+  // These are for invisible logic actions (not dialogue or wait), so returning null is perfectly normal and correct.
   return null;
 }
