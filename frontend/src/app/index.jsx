@@ -1,21 +1,21 @@
 import { GameStateProvider, useGameState } from "../core/GameStateContext";
 import GameEngineScreen from "../screens/GameEngineScreen";
 import MainMenuScreen from "../screens/MainMenuScreen.jsx";
+import LevelScreen from "../screens/LevelScreen.jsx";
 
-function MainRouter () {
-    const { gameState } = useGameState();
-    if (gameState.currentScreen === "MENU"){
-      return <MainMenuScreen/>;
-    }
-    return <GameEngineScreen/>;
+function MainRouter() {
+  const { gameState } = useGameState();
+  if (gameState.currentScreen === "MENU") {
+    return <MainMenuScreen />;
+  } else {
+    return <GameEngineScreen />;
+  }
 }
 
 export default function Index() {
   return (
     <GameStateProvider>
-      <MainRouter/>
+      <MainRouter />
     </GameStateProvider>
   );
 }
-
-
