@@ -1,6 +1,4 @@
-import React from "react";
 import {
-  View,
   Text,
   TouchableOpacity,
   StyleSheet,
@@ -12,42 +10,38 @@ import { useGameState } from "../core/GameStateContext.jsx";
 export default function MainMenuScreen() {
   const { dispatch } = useGameState();
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>MEU JOGO</Text>
-
+    <ImageBackground
+      style={styles.container}
+      source={require("../../assets/extra/main_menu.png")}
+    >
+      <Text style={styles.text}>Alice no País das maravilhas</Text>
       <TouchableOpacity
         style={styles.button}
         onPress={() => dispatch({ type: "START_GAME" })}
-      >
-        <Text style={styles.buttonText}>INICIAR</Text>
-      </TouchableOpacity>
-    </View>
+      ></TouchableOpacity>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#121212",
-    justifyContent: "center",
-    alignItems: "center",
   },
-  title: {
-    fontSize: 40,
-    color: "#FFF",
+  text: {
+    // height: "30%",
+    // width: "20%",
+    top: "33%",
+    left: "31.5%",
+    position: "absolute",
+    color: "#FC0266",
+    fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 40,
   },
   button: {
-    backgroundColor: "#4a90e2",
-    paddingVertical: 15,
-    paddingHorizontal: 50,
-    borderRadius: 10,
-  },
-
-  buttonText: {
-    color: "#FFF",
-    fontSize: 18,
-    fontWeight: "bold",
+    height: "30%",
+    width: "20%",
+    top: "55%",
+    left: "30%",
+    position: "absolute",
   },
 });

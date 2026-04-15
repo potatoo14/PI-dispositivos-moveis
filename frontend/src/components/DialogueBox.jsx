@@ -1,30 +1,40 @@
-import { View, Text, StyleSheet } from "react-native";
+import { Text, StyleSheet, ImageBackground } from "react-native";
 
 export default function DialogueBox({ speaker, text }) {
   if (!text) return null; // Don't render if there's no dialogue
 
   return (
-    <View style={styles.container}>
+    <ImageBackground
+      source={require("../../assets/extra/dialogue_box.png")}
+      style={styles.container}
+      imageStyle={{ resizeMode: "stretch" }}
+    >
       {speaker && <Text style={styles.speakerName}>{speaker}</Text>}
       <Text style={styles.dialogueText}>{text}</Text>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: "30%",
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
-    padding: "1%",
-    position: "absolute",
-    bottom: 0,
+    height: "70%",
     width: "100%",
+    top: "50%",
+    position: "absolute",
   },
   speakerName: {
-    color: "yellow",
+    top: "4%",
+    left: "14%",
+    color: "white",
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 8,
   },
-  dialogueText: { color: "white", fontSize: 18, lineHeight: 26 },
+  dialogueText: {
+    top: "4%",
+    left: "8%",
+    color: "black",
+    fontSize: 22,
+    lineHeight: 26,
+  },
 });
