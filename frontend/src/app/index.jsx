@@ -1,21 +1,25 @@
-import { GameStateProvider, useGameState } from "../core/GameStateContext";
-import GameEngineScreen from "../screens/GameEngineScreen";
-import MainMenuScreen from "../screens/MainMenuScreen.jsx";
-import LevelScreen from "../screens/LevelScreen.jsx";
+import { NavigationContainer, NavigationIndependentTree } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { GameStateProvider } from "../core/GameStateContext";
 
-function MainRouter() {
-  const { gameState } = useGameState();
-  if (gameState.currentScreen === "MENU") {
-    return <MainMenuScreen />;
-  } else {
-    return <GameEngineScreen />;
-  }
-}
+import MainMenuScreen from "../screens/MainMenuScreen";
+import GameEngineScreen from "../screens/GameEngineScreen";
+import InventoryScreen from "../screens/InventoryScreen";
+
+const Stack = createNativeStackNavigator();
 
 export default function Index() {
   return (
     <GameStateProvider>
-      <MainRouter />
+      <NavigationIndependentTree>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="MainMenu" component={MainMenuScreen} />
+            <Stack.Screen name="GameEngine" component={GameEngineScreen} />
+            <Stack.Screen name="Inventory" component={InventoryScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </NavigationIndependentTree>
     </GameStateProvider>
   );
 }

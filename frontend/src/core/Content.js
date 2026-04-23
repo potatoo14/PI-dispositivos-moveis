@@ -20,7 +20,7 @@ export const ASSETS = {
     arrow: require("../../assets/sprites/arrow.png"),
     ibutton: require("../../assets/sprites/info_button.png"),
     table: require("../../assets/sprites/table.png"),
-    key: require("../../assets/sprites/key.png"),
+    door_key: require("../../assets/sprites/key.png"),
     door: require("../../assets/sprites/door.png"),
   },
 };
@@ -174,12 +174,12 @@ export const STORY = {
         height: "10%",
       },
       {
-        img: "key",
+        img: "door_key",
         x: "26%",
         y: "80%",
         width: "8%",
         height: "8%",
-        hideIfFlag: "has_key",
+        hideIfItem: "door_key",
         targetEvent: "pickup_key_event",
       },
       {
@@ -188,7 +188,7 @@ export const STORY = {
         y: "79%",
         width: "5%",
         height: "10%",
-        hideIfFlag: "has_key",
+        hideIfItem: "door_key",
         targetDialogue: "door_locked_dialogue",
       },
       {
@@ -198,14 +198,14 @@ export const STORY = {
         width: "5%",
         height: "10%",
         targetEvent: "door_open_event",
-        showIfFlag: "has_key",
+        showIfItem: "door_key",
       },
     ],
   },
   door_locked_dialogue: [
     { speaker: "Alice", text: "Trancada, devo procurar por uma chave..." },
   ],
-  pickup_key_event: [{ type: "set_flag", flag: "has_key" }],
+  pickup_key_event: [{ type: "give_item", itemId: "door_key" }],
   place5: {
     background: "place5",
   },
