@@ -23,6 +23,11 @@ export const ASSETS = {
     key: require("../../assets/sprites/key.png"),
     door: require("../../assets/sprites/door.png"),
   },
+
+  extra: {
+    main_menu: require("../../assets/extra/main_menu.png"),
+  },
+  
 };
 export const STORY = {
   intro_room: {},

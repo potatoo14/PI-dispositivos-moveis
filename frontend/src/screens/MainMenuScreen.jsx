@@ -5,31 +5,25 @@ import {
   ImageBackground,
 } from "react-native";
 
-import { useGameState } from "../core/GameStateContext.jsx";
-
-export default function MainMenuScreen() {
-  const { dispatch } = useGameState();
+export default function MainMenuScreen({ navigation }) {
   return (
     <ImageBackground
       style={styles.container}
       source={require("../../assets/extra/main_menu.png")}
     >
       <Text style={styles.text}>Alice no País das maravilhas</Text>
+
       <TouchableOpacity
         style={styles.button}
-        onPress={() => dispatch({ type: "START_GAME" })}
-      ></TouchableOpacity>
+        onPress={() => navigation.navigate("GameEngine")}
+      />
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   text: {
-    // height: "30%",
-    // width: "20%",
     top: "33%",
     left: "31.5%",
     position: "absolute",
