@@ -1,7 +1,6 @@
 import { GameStateProvider, useGameState } from "../core/GameStateContext";
 import GameEngineScreen from "../screens/GameEngineScreen";
 import MainMenuScreen from "../screens/MainMenuScreen.jsx";
-import LevelScreen from "../screens/LevelScreen.jsx";
 
 function MainRouter() {
   const { gameState } = useGameState();
