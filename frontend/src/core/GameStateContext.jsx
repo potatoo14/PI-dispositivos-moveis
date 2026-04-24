@@ -5,10 +5,12 @@ const initialState = {
   flags: {},
   currentRoom: "intro_room",
   activeEvent: "intro_event",
+  currentScreen: "MENU",
 };
 
 function gameReducer(state, action) {
   switch (action.type) {
+
     case "give_item":
       if (state.inventory.includes(action.itemId)) return state; // Prevent duplicates
       return { ...state, inventory: [...state.inventory, action.itemId] };
@@ -26,9 +28,9 @@ function gameReducer(state, action) {
       return { ...state, flags: { ...state.flags, [action.flag]: false } };
 
     case "toggle_flag":
-      return {
-        ...state,
-        flags: { ...state.flags, [action.flag]: !state.flags[action.flag] },
+      return { 
+        ...state, 
+        flags: { ...state.flags, [action.flag]: !state.flags[action.flag] } 
       };
 
     case "room_change":
@@ -37,10 +39,19 @@ function gameReducer(state, action) {
     case "set_event":
       return { ...state, activeEvent: action.targetEvent };
 
-    case "toggle_inventory":
-      return { ...state, isInventoryOpen: !state.isInventoryOpen };
+    case "START_GAME":
+      return { 
+        ...state, 
+        currentScreen: "GAME",
+    };
 
-    default:
+    case "GO_TO_MENU":
+      return { 
+        ...state, 
+        currentScreen: "MENU" 
+  };
+
+  default:
       // The dispatcher ignores visual actions like "dialogue"
       return state;
   }
