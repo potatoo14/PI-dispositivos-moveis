@@ -16,6 +16,12 @@ export default function EventManager() {
     return null;
   }
 
+  //Pausa 
+
+  if (gameState.isPaused) {
+    return null;
+  }
+
   if (!gameState.activeEvent) {
     // This usually means the parent (GameEngineScreen) failed to unmount this component
     // when the event finished. It's safe to return null, but worth noting.
@@ -56,6 +62,9 @@ export default function EventManager() {
   }
 
   const nextAction = () => {
+    // Só permite avançar se o jogo NÃO estiver pausado
+    if (gameState.isPaused) return;
+
     if (actionIndex < eventSequence.length - 1) {
       setActionIndex((prev) => prev + 1);
     } else {
@@ -67,14 +76,14 @@ export default function EventManager() {
   };
 
   useEffect(() => {
-    if (!currentAction) return;
+    if (!currentAction || gameState.isPaused) return;
 
     dispatch(currentAction);
 
     if (currentAction.type !== "dialogue" && currentAction.type !== "wait") {
       nextAction();
     }
-  }, [actionIndex, currentAction]);
+  }, [actionIndex, currentAction, gameState.isPaused]);
 
   if (currentAction.type === "dialogue") {
     if (!currentAction.sequence) {

@@ -40,14 +40,7 @@ export default function MainMenuScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  text: {
-    top: "33%",
-    left: "31.5%",
-    position: "absolute",
-    color: "#FC0266",
-    fontSize: 22,
-    fontWeight: "bold",
-  },
+  
   button: {
     height: "30%",
     width: "20%",

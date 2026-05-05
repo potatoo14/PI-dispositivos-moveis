@@ -1,4 +1,4 @@
-import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text, Image } from "react-native";
 
 import { useGameState } from "../core/GameStateContext";
 import EventManager from "../components/EventManager";
@@ -7,18 +7,27 @@ import ExplorationView from "../components/ExplorationView";
 export default function GameEngineScreen({ navigation }) {
   const { gameState } = useGameState();
 
+  const handleOpenConfig = () => {
+  
+    dispatch({ type: "set_paused", value: true });
+    navigation.navigate("ConfigMenu");
+  };
+
   return (
     <View style={styles.container}>
       <ExplorationView />
 
       {gameState.activeEvent ? <EventManager /> : null}
 
-      {/* Botão de voltar pro menu */}
+      {/* Botão de ir para o menu de configurações */}
       <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
+        style={styles.configbutton}
+        onPress={() => navigation.navigate("ConfigMenu")}
       >
-        <Text style={{ color: "#fff" }}>Voltar</Text>
+        <Image source={require('../../assets/extra/option_button.png')}
+          style={styles.buttonImage}
+          resizeMode="contain"
+        />
       </TouchableOpacity>
     </View>
   );
@@ -27,9 +36,19 @@ export default function GameEngineScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
 
-  backButton: {
+  configbutton: {
     position: "absolute",
-    top: 40,
-    left: 20,
+    top: "5%",    // Um pequeno recuo do topo para não cobrir a barra de status
+    right: "0%",  // "Literalmente do lado da direita, sem distância"
+    width: "10%", // MESMO WIDTH DO IBUTTON
+    height: "20%", // MESMO HEIGHT DO IBUTTON
+    zIndex: 999,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  buttonImage: {
+    width: "200%",
+    height: "200%",
   },
 });

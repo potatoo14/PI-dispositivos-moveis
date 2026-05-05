@@ -6,7 +6,10 @@ const initialState = {
   currentRoom: "intro_room",
   activeEvent: "intro_event",
   currentScreen: "MENU",
+  isPaused: false,
 };
+
+
 
 function gameReducer(state, action) {
   switch (action.type) {
@@ -39,11 +42,19 @@ function gameReducer(state, action) {
     case "set_event":
       return { ...state, activeEvent: action.targetEvent };
 
+    case "set_paused":
+      return { 
+        ...state, 
+        isPaused: action.value 
+      };
+
     case "START_GAME":
       return { 
         ...state, 
         currentScreen: "GAME",
-    };
+        isPaused: false
+      };
+
 
     case "GO_TO_MENU":
       return { 
