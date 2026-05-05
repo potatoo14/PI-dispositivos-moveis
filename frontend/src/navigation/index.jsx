@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import GameEngineScreen from "../screens/GameEngineScreen.jsx";
 import MainMenuScreen from "../screens/MainMenuScreen.jsx";
+import ConfigMenuScreen from "../screens/ConfigMenuScreen.jsx";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,9 +15,11 @@ export default function Index() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="MainMenu" component={MainMenuScreen} />
+          <Stack.Screen name="ConfigMenu" component={ConfigMenuScreen} />
           <Stack.Screen name="GameEngine" component={GameEngineScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </GameStateProvider>
   );
 }
+

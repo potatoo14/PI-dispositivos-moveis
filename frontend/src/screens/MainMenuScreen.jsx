@@ -2,6 +2,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  Image,
   ImageBackground,
 } from "react-native";
 
@@ -11,12 +12,28 @@ export default function MainMenuScreen({ navigation }) {
       style={styles.container}
       source={require("../../assets/extra/main_menu.png")}
     >
-      <Text style={styles.text}>Alice no País das maravilhas</Text>
-
+      
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("GameEngine")}
-      />
+        >
+          <Image
+            source={require('../../assets/extra/play_menu.png')}
+            style={styles.buttonImage}
+            resizeMode="contain"
+          />
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.button, { left: "50%" }]}
+        onPress={() => navigation.navigate("ConfigMenu")}
+        >
+        <Image
+            source={require('../../assets/extra/config_menu.png')}
+            style={styles.buttonImage}
+            resizeMode="contain"
+          />
+      </TouchableOpacity>
     </ImageBackground>
   );
 }
@@ -37,5 +54,9 @@ const styles = StyleSheet.create({
     top: "55%",
     left: "30%",
     position: "absolute",
+  },
+  buttonImage: {
+    width: 120,
+    height: 60,
   },
 });
