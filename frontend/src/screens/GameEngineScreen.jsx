@@ -29,6 +29,18 @@ export default function GameEngineScreen({ navigation }) {
           resizeMode="contain"
         />
       </TouchableOpacity>
+
+      {/* Botão de ir para o inventário */}
+
+      <TouchableOpacity
+        style={styles.inventorybutton}
+        onPress={() => navigation.navigate("Inventory")}
+      >
+        <Image source={require('../../assets/extra/item_button.png')}
+          style={styles.buttonImage}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -38,10 +50,21 @@ const styles = StyleSheet.create({
 
   configbutton: {
     position: "absolute",
-    top: "5%",    // Um pequeno recuo do topo para não cobrir a barra de status
-    right: "0%",  // "Literalmente do lado da direita, sem distância"
-    width: "10%", // MESMO WIDTH DO IBUTTON
-    height: "20%", // MESMO HEIGHT DO IBUTTON
+    top: "5%",    
+    right: "0%",  
+    width: "10%", 
+    height: "20%", 
+    zIndex: 999,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  inventorybutton: {
+    position: "absolute",
+    top: "9%",       
+    right: "10%",    
+    width: "10%",    
+    height: "20%",   
     zIndex: 999,
     justifyContent: 'center',
     alignItems: 'center',

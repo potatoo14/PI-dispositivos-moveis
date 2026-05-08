@@ -13,9 +13,6 @@ export default function ConfigMenuScreen({ navigation }) {
       style={styles.container}
       source={require("../../assets/extra/config_background.png")}
     >
-
-      {/* Botão de Sair (Canto Superior Esquerdo) */}
-
       <TouchableOpacity
         style={styles.backbutton}
         onPress={() => navigation.goBack()}
@@ -27,12 +24,8 @@ export default function ConfigMenuScreen({ navigation }) {
         />
       </TouchableOpacity>
 
-      {/* Painel de Configurações */}
-
       <View style={styles.settingsPanel}>
-
-        {/* Configurações de Idioma */}
-
+        {/* Idioma */}
         <View style={styles.row}>
           <Text style={styles.label}>IDIOMA</Text>
           <Image
@@ -42,26 +35,24 @@ export default function ConfigMenuScreen({ navigation }) {
           <View style={styles.emptySpace} />
         </View>
 
-        {/* Configurações de VFX */}
-
+        {/* VFX */}
         <View style={styles.row}>
           <Text style={styles.label}>VFX</Text>
           <Image
             source={require('../../assets/extra/sound_button.png')}
             style={styles.soundIcon}
           />
-          <View style={styles.sliderPlaceholder} /> {/* Aqui entraria um Slider real */}
+          <View style={styles.sliderPlaceholder} />
         </View>
 
-        {/* Configurações de Som */}
-
+        {/* Som */}
         <View style={styles.row}>
           <Text style={styles.label}>SOM</Text>
           <Image
             source={require('../../assets/extra/sound_button.png')}
             style={styles.soundIcon}
           />
-          <View style={styles.sliderPlaceholder} /> {/* Aqui entraria um Slider real */}
+          <View style={styles.sliderPlaceholder} />
         </View>
       </View>
     </ImageBackground>
