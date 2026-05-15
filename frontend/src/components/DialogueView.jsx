@@ -1,76 +1,84 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TouchableWithoutFeedback } from "react-native";
-
-import DialogueBox from "./DialogueBox";
-import CharacterSprite from "./CharacterSprite";
-import ChoiceMenu from "./ChoiceMenu";
-
-import { useGameState } from "../core/GameStateContext";
-import { ASSETS, STORY } from "../core/Content";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { DIALOGUES } from "../core/Content";
 
 export default function DialogueView({ sequenceId, onComplete }) {
-  const { gameState, dispatch } = useGameState();
-  const [frameIndex, setFrameIndex] = useState(0);
+  const [lineIndex, setLineIndex] = useState(0);
 
-  const sceneFrames = STORY[sequenceId];
+  // 1. Buscamos o array de falas usando o ID que veio do EventManager
+  const dialogueLines = DIALOGUES[sequenceId];
 
-  if (!sceneFrames || !Array.isArray(sceneFrames)) {
-    console.error(`[DialogueView] Dialogue "${sequenceId}" not found or is not an array`);
+  // 2. Verificação de segurança: se 'dialogueLines' não existir, paramos aqui
+  if (!dialogueLines || !Array.isArray(dialogueLines)) {
+    console.error(`[DialogueView] Erro: ID "${sequenceId}" não encontrado em DIALOGUES.`);
     return null;
   }
 
-  const currentFrame = sceneFrames[frameIndex];
-  if (!currentFrame) {
-    console.error(
-      `[DialogueView] Dialogue frame index "${frameIndex}" not found in "${sceneFrames}"`,
-    );
-    return null;
-  }
+  // 3. Só agora pegamos a linha atual, pois sabemos que 'dialogueLines' existe
+  const currentLine = dialogueLines[lineIndex];
 
-  const handleScreenTap = () => {
-    if (currentFrame.choices) return;
-
-    if (frameIndex < sceneFrames.length - 1) {
-      setFrameIndex((prev) => prev + 1);
+  const nextLine = () => {
+    if (lineIndex < dialogueLines.length - 1) {
+      setLineIndex(prev => prev + 1);
     } else {
+      // Se era a última fala, avisa o EventManager para fechar a caixa
       onComplete();
     }
   };
 
-  const handleChoice = (choice) => {
-    dispatch({type: "set_event", targetEvent: choice.targetEvent});
-  };
-
   return (
-    <TouchableWithoutFeedback onPress={handleScreenTap}>
-      <View style={StyleSheet.absoluteFill}>
-        <View style={styles.spriteLayer}>
-          {currentFrame.sprites?.map((sprite, index) => (
-            <CharacterSprite
-              key={index}
-              character={sprite.character}
-              position={sprite.position}
-            />
-          ))}
+    <TouchableOpacity 
+      activeOpacity={1} 
+      onPress={nextLine} 
+      style={styles.overlay}
+    >
+      <View style={styles.dialogueBox}>
+        {/* Usamos o opcional chaining ?. para evitar quebras se o objeto vier estranho */}
+        <Text style={styles.speakerText}>{currentLine?.speaker || "???"}</Text>
+        <Text style={styles.dialogueText}>{currentLine?.text || "..."}</Text>
+        
+        <View style={styles.footer}>
+          <Text style={styles.continueText}>Toque para continuar</Text>
         </View>
-
-        {currentFrame.choices && (
-          <ChoiceMenu choices={currentFrame.choices} onChoose={handleChoice} />
-        )}
-
-        <DialogueBox speaker={currentFrame.speaker} text={currentFrame.text} />
       </View>
-    </TouchableWithoutFeedback>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  spriteLayer: {
-    position: "absolute",
-    bottom: 150,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "center",
-    height: "60%",
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "flex-end", // Balão fica na parte de baixo
+    padding: 20,
+    zIndex: 2000, // Garante que fica na frente do cenário e botões
+  },
+  dialogueBox: {
+    backgroundColor: "#FFF",
+    padding: 20,
+    borderRadius: 15,
+    borderWidth: 3,
+    borderColor: "#000",
+    minHeight: 150,
+  },
+  speakerText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#2E86C1",
+    marginBottom: 8,
+  },
+  dialogueText: {
+    fontSize: 18,
+    lineHeight: 24,
+    color: "#333",
+  },
+  footer: {
+    marginTop: 15,
+    alignItems: "flex-end",
+  },
+  continueText: {
+    fontSize: 12,
+    color: "#AAA",
+    fontStyle: "italic",
   },
 });
