@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { useGameState } from "../core/GameStateContext";
-import { STORY } from "../core/Content";
+import { DIALOGUES } from "../core/Content"; // Removido ACTIONS e ROOMS daqui pois não são usados neste arquivo
 import DialogueView from "./DialogueView";
 
 export default function EventManager() {
@@ -9,68 +9,42 @@ export default function EventManager() {
   const [actionIndex, setActionIndex] = useState(0);
   const [trackedEvent, setTrackedEvent] = useState(gameState.activeEvent);
 
-  // EventManager reset, using this instead of useEffect to avoid race condition
+  // EventManager reset
   if (gameState.activeEvent !== trackedEvent) {
     setTrackedEvent(gameState.activeEvent);
     setActionIndex(0);
     return null;
   }
 
-  //Pausa 
-
-  if (gameState.isPaused) {
+  // Se estiver pausado ou não houver evento, não renderiza nada
+  if (gameState.isPaused || !gameState.activeEvent) {
     return null;
   }
 
-  if (!gameState.activeEvent) {
-    // This usually means the parent (GameEngineScreen) failed to unmount this component
-    // when the event finished. It's safe to return null, but worth noting.
-    return null;
-  }
-
-  // If activeEvent is a array, it means it's a custom event created outside of STORY
-  // Otherwise just use what's on STORY
+  // Busca a sequência em DIALOGUES
   const eventSequence = Array.isArray(gameState.activeEvent)
     ? gameState.activeEvent
-    : STORY[gameState.activeEvent];
+    : DIALOGUES[gameState.activeEvent];
 
-  if (
-    !eventSequence ||
-    !Array.isArray(eventSequence) ||
-    eventSequence.length === 0
-  ) {
-    console.error(
-      `[EventManager] The event "${gameState.activeEvent}" is either missing from STORY, is not an array, or is totally empty`,
-    );
+  if (!eventSequence || !Array.isArray(eventSequence) || eventSequence.length === 0) {
+    console.error(`[EventManager] O evento "${gameState.activeEvent}" não foi encontrado.`);
     return null;
   }
 
   const currentAction = eventSequence[actionIndex];
 
-  if (!currentAction) {
-    console.error(
-      `[EventManager] Tried to read action index ${actionIndex} in "${gameState.activeEvent}", but it doesn't exist (Sequence length is ${eventSequence.length})`,
-    );
-    return null;
-  }
-
-  if (!currentAction.type) {
-    console.warn(
-      `[EventManager] The action at index ${actionIndex} in "${gameState.activeEvent}" has no 'type' property`,
-      currentAction,
-    );
-  }
+  if (!currentAction) return null;
 
   const nextAction = () => {
-    // Só permite avançar se o jogo NÃO estiver pausado
     if (gameState.isPaused) return;
 
     if (actionIndex < eventSequence.length - 1) {
       setActionIndex((prev) => prev + 1);
     } else {
+      // Limpa o evento ao terminar a sequência
       dispatch({
         type: "set_event",
-        targetEvent: currentAction.targetEvent, // clever trick to make set_event at the end of an event array work properly
+        targetEvent: null,
       });
     }
   };
@@ -78,39 +52,32 @@ export default function EventManager() {
   useEffect(() => {
     if (!currentAction || gameState.isPaused) return;
 
-    dispatch(currentAction);
-
+    // Ações que não são diálogo avançam sozinhas
     if (currentAction.type !== "dialogue" && currentAction.type !== "wait") {
-      nextAction();
+      dispatch(currentAction); // 1. Despacha a ação (ex: mudar uma flag)
+      nextAction();            // 2. Pula para o próximo passo da lista
     }
   }, [actionIndex, currentAction, gameState.isPaused]);
 
   if (currentAction.type === "dialogue") {
-    if (!currentAction.sequence) {
-      console.error(
-        `[EventManager] Dialogue action in "${gameState.activeEvent}" is missing a 'sequence' property`,
-        currentAction,
-      );
+    // Busca o ID que você definiu no Content.js
+    const dialogueId = currentAction.sequence || currentAction.id;
+
+    if (!dialogueId) {
+      console.error(`[EventManager] Faltando 'id' ou 'sequence' em:`, currentAction);
+      return null;
     }
 
     return (
       <DialogueView
         key={`${gameState.activeEvent}-${actionIndex}`}
-        sequenceId={currentAction.sequence}
+        sequenceId={dialogueId} 
         onComplete={nextAction}
       />
     );
   }
 
-  if (currentAction.type === "wait") {
-    return (
-      // invisible full-screen button that just advances the event when tapped
-      <TouchableWithoutFeedback onPress={nextAction}>
-        <View style={StyleSheet.absoluteFill} />
-      </TouchableWithoutFeedback>
-    );
-  }
-
-  // These are for invisible logic actions (not dialogue or wait), so returning null is perfectly normal and correct.
+  // Se você decidir usar o 'wait' no futuro, o código abaixo deve voltar.
+  // Se não, retornar null é o correto para ações invisíveis.
   return null;
 }

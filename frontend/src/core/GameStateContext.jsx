@@ -3,8 +3,8 @@ import { createContext, useReducer, useContext } from "react";
 const initialState = {
   inventory: [],
   flags: {},
-  currentRoom: "intro_room",
-  activeEvent: "intro_event",
+  currentRoom: "garden",
+  activeEvent: null,
   currentScreen: "MENU",
   isPaused: false,
 };

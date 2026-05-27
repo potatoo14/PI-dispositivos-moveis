@@ -5,40 +5,51 @@ import {
   TouchableOpacity,
   ScrollView,
   useWindowDimensions,
+  View,
+  Text,
 } from "react-native";
 import { useGameState } from "../core/GameStateContext";
-import { ASSETS, STORY } from "../core/Content";
+import { ASSETS, DIALOGUES, ROOMS, ACTIONS } from "../core/Content";
 
 export default function ExplorationView() {
   const { gameState, dispatch } = useGameState();
 
-  const roomData = STORY[gameState.currentRoom];
+  if (!ROOMS) {
+    return <Text>Erro: Objeto ROOMS não importado!</Text>;
+  }
+
+  const roomData = ROOMS[gameState.currentRoom];
 
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
 
   if (!roomData) {
-    console.error(
-      `[ExplorationView] Room "${gameState.currentRoom}" not found`,
+    console.log("SALA ATUAL NO ESTADO:", gameState.currentRoom);
+    console.log("SALAS DISPONÍVEIS NO CONTENT:", Object.keys(ROOMS));
+    
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'red'}}>
+        <Text style={{color: 'white'}}>Erro: Sala "{gameState.currentRoom}" não encontrada!</Text>
+        <Text style={{color: 'white'}}>Verifique seu GameStateContext ou Content.js</Text>
+      </View>
     );
-    return null;
   }
 
   const handleInteract = (interactable) => {
-    // i hate this but it's the simplest solution
-    // bypass the EventManager doing things direcly
-    if (interactable.targetRoom) {
-      dispatch({ type: "room_change", targetRoom: interactable.targetRoom });
-    } else if (interactable.targetDialogue) {
+    const action = ACTIONS[interactable.action];
+
+    if (!action) {
+      console.warn(`[ExplorationView] Ação "${interactable.action}" não encontrada em ACTIONS`);
+      return;
+    }
+
+    if (action.type === "move") {
+      dispatch({ type: "room_change", targetRoom: action.to });
+    } 
+    else if (action.type === "dialogue") {
       dispatch({ 
-        type: "set_event", // builds a custom event without relying on STORY data
-        targetEvent: [ { type: "dialogue", sequence: interactable.targetDialogue } ] 
+        type: "set_event", 
+        targetEvent: [ { type: "dialogue", sequence: action.id } ] 
       });
-    } else if (interactable.targetEvent) {
-      dispatch({ type: "set_event", targetEvent: interactable.targetEvent });
-    } else {
-      console.warn(
-        `[ExplorationView] interactable "${interactable}" has no target set`,
-      );
     }
   };
 
@@ -111,8 +122,8 @@ export default function ExplorationView() {
                     position: "absolute",
                     left: interactable.x,
                     top: interactable.y,
-                    width: interactable.width,
-                    height: interactable.height,
+                    width: interactable.w,
+                    height: interactable.h,
                     // backgroundColor: "rgba(255, 0, 0, 0.4)", // UNCOMMENT THIS LINE WHILE DEVELOPING TO SEE THE HITBOXES:
                   }}
                   onPress={() => handleInteract(interactable)}
