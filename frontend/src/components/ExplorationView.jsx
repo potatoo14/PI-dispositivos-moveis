@@ -25,11 +25,22 @@ export default function ExplorationView() {
   if (!roomData) {
     console.log("SALA ATUAL NO ESTADO:", gameState.currentRoom);
     console.log("SALAS DISPONÍVEIS NO CONTENT:", Object.keys(ROOMS));
-    
+
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'red'}}>
-        <Text style={{color: 'white'}}>Erro: Sala "{gameState.currentRoom}" não encontrada!</Text>
-        <Text style={{color: 'white'}}>Verifique seu GameStateContext ou Content.js</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "red",
+        }}
+      >
+        <Text style={{ color: "white" }}>
+          Erro: Sala "{gameState.currentRoom}" não encontrada!
+        </Text>
+        <Text style={{ color: "white" }}>
+          Verifique seu GameStateContext ou Content.js
+        </Text>
       </View>
     );
   }
@@ -38,18 +49,21 @@ export default function ExplorationView() {
     const action = ACTIONS[interactable.action];
 
     if (!action) {
-      console.warn(`[ExplorationView] Ação "${interactable.action}" não encontrada em ACTIONS`);
+      console.warn(
+        `[ExplorationView] Ação "${interactable.action}" não encontrada em ACTIONS`,
+      );
       return;
     }
 
     if (action.type === "move") {
       dispatch({ type: "room_change", targetRoom: action.to });
-    } 
-    else if (action.type === "dialogue") {
-      dispatch({ 
-        type: "set_event", 
-        targetEvent: [ { type: "dialogue", sequence: action.id } ] 
+    } else if (action.type === "dialogue") {
+      dispatch({
+        type: "set_event",
+        targetEvent: [{ type: "dialogue", sequence: action.id }],
       });
+    } else if (action.type === "event") {
+      dispatch({ type: "set_event", targetEvent: action.id });
     }
   };
 

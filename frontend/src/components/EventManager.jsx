@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { useGameState } from "../core/GameStateContext";
-import { DIALOGUES } from "../core/Content"; // Removido ACTIONS e ROOMS daqui pois não são usados neste arquivo
+import { SEQUENCES } from "../core/Content";
 import DialogueView from "./DialogueView";
 
 export default function EventManager() {
@@ -21,13 +21,19 @@ export default function EventManager() {
     return null;
   }
 
-  // Busca a sequência em DIALOGUES
+  // Busca a sequência em SEQUENCES
   const eventSequence = Array.isArray(gameState.activeEvent)
     ? gameState.activeEvent
-    : DIALOGUES[gameState.activeEvent];
+    : SEQUENCES[gameState.activeEvent];
 
-  if (!eventSequence || !Array.isArray(eventSequence) || eventSequence.length === 0) {
-    console.error(`[EventManager] O evento "${gameState.activeEvent}" não foi encontrado.`);
+  if (
+    !eventSequence ||
+    !Array.isArray(eventSequence) ||
+    eventSequence.length === 0
+  ) {
+    console.error(
+      `[EventManager] O evento "${gameState.activeEvent}" não foi encontrado.`,
+    );
     return null;
   }
 
@@ -55,29 +61,40 @@ export default function EventManager() {
     // Ações que não são diálogo avançam sozinhas
     if (currentAction.type !== "dialogue" && currentAction.type !== "wait") {
       dispatch(currentAction); // 1. Despacha a ação (ex: mudar uma flag)
-      nextAction();            // 2. Pula para o próximo passo da lista
+      nextAction(); // 2. Pula para o próximo passo da lista
     }
   }, [actionIndex, currentAction, gameState.isPaused]);
 
-  if (currentAction.type === "dialogue") {
+  if (currentAction.type === "dialogue" && currentAction.type !== "wait") {
     // Busca o ID que você definiu no Content.js
     const dialogueId = currentAction.sequence || currentAction.id;
 
     if (!dialogueId) {
-      console.error(`[EventManager] Faltando 'id' ou 'sequence' em:`, currentAction);
+      console.error(
+        `[EventManager] Faltando 'id' ou 'sequence' em:`,
+        currentAction,
+      );
       return null;
     }
 
     return (
       <DialogueView
         key={`${gameState.activeEvent}-${actionIndex}`}
-        sequenceId={dialogueId} 
+        sequenceId={dialogueId}
         onComplete={nextAction}
       />
     );
   }
 
-  // Se você decidir usar o 'wait' no futuro, o código abaixo deve voltar.
-  // Se não, retornar null é o correto para ações invisíveis.
+  if (currentAction.type === "wait") {
+    return (
+      // invisible full-screen button that just advances the event when tapped
+      <TouchableWithoutFeedback onPress={nextAction}>
+        <View style={StyleSheet.absoluteFill} />
+      </TouchableWithoutFeedback>
+    );
+  }
+
+  // Retornar null é o correto para ações invisíveis.
   return null;
 }

@@ -9,8 +9,6 @@ const initialState = {
   isPaused: false,
 };
 
-
-
 function gameReducer(state, action) {
   switch (action.type) {
 

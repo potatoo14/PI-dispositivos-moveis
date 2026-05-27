@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { DIALOGUES } from "../core/Content";
+import { SEQUENCES } from "../core/Content";
 
 export default function DialogueView({ sequenceId, onComplete }) {
   const [lineIndex, setLineIndex] = useState(0);
 
   // 1. Buscamos o array de falas usando o ID que veio do EventManager
-  const dialogueLines = DIALOGUES[sequenceId];
+  const dialogueLines = SEQUENCES[sequenceId];
 
   // 2. Verificação de segurança: se 'dialogueLines' não existir, paramos aqui
   if (!dialogueLines || !Array.isArray(dialogueLines)) {
-    console.error(`[DialogueView] Erro: ID "${sequenceId}" não encontrado em DIALOGUES.`);
+    console.error(`[DialogueView] Erro: ID "${sequenceId}" não encontrado em SEQUENCES.`);
     return null;
   }
 
