@@ -193,7 +193,6 @@ export const ROOMS = {
         y: "85%",
         w: "10%",
         h: "10%",
-        action: "USE_DOOR_LOCKED",
       },
       {
         img: "key",
@@ -225,6 +224,6 @@ export const ROOMS = {
       },
     ],
   },
-  door_open: { background: "door_open", interactables: [] },
-  end: { background: "end", interactables: [] },
+  door_open: { background: "door_open" },
+  end: { background: "end" },
 };
